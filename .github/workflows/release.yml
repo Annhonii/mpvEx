@@ -28,13 +28,10 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: |
-            platform-tools
-            platforms;android-37
-            build-tools;34.0.0
+          packages: 'platform-tools'
 
-      - name: Install Android build tools
-        run: sdkmanager "build-tools;34.0.0"
+      - name: Install Android platform and build tools
+        run: sdkmanager "platforms;android-37" "build-tools;34.0.0"
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
