@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.util.Xml
 import app.marlboroadvance.mpvex.database.MpvExDatabase
-import app.marlboroadvance.mpvex.domain.network.NetworkConnection
-import app.marlboroadvance.mpvex.domain.network.NetworkProtocol
 import app.marlboroadvance.mpvex.preferences.preference.PreferenceStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,9 +25,6 @@ class SettingsManager(
     private const val TAG_ROOT = "mpvExSettings"
     private const val TAG_PREFERENCES = "preferences"
     private const val TAG_PREFERENCE = "preference"
-    private const val TAG_DATABASE = "database"
-    private const val TAG_NETWORK_CONNECTIONS = "networkConnections"
-    private const val TAG_NETWORK_CONNECTION = "networkConnection"
     
     private const val ATTR_KEY = "key"
     private const val ATTR_TYPE = "type"
@@ -100,19 +95,6 @@ class SettingsManager(
     }
     serializer.endTag(null, TAG_PREFERENCES)
 
-    serializer.startTag(null, TAG_DATABASE)
-
-    val networkConnections = database.networkConnectionDao().getAllConnectionsList()
-    serializer.startTag(null, TAG_NETWORK_CONNECTIONS)
-    networkConnections.forEach { connection ->
-      writeNetworkConnection(serializer, connection)
-      exportedCount++
-      exportedKeys.add("network:${connection.name}")
-    }
-    serializer.endTag(null, TAG_NETWORK_CONNECTIONS)
-
-    serializer.endTag(null, TAG_DATABASE)
-
     serializer.endTag(null, TAG_ROOT)
     serializer.endDocument()
     serializer.flush()
@@ -168,25 +150,6 @@ class SettingsManager(
   }
 
 
-  private fun writeNetworkConnection(
-    serializer: XmlSerializer,
-    connection: NetworkConnection,
-  ) {
-    serializer.startTag(null, TAG_NETWORK_CONNECTION)
-    serializer.attribute(null, "id", connection.id.toString())
-    serializer.attribute(null, "name", connection.name)
-    serializer.attribute(null, "protocol", connection.protocol.name)
-    serializer.attribute(null, "host", connection.host)
-    serializer.attribute(null, "port", connection.port.toString())
-    serializer.attribute(null, "username", connection.username)
-    serializer.attribute(null, "password", connection.password)
-    serializer.attribute(null, "path", connection.path)
-    serializer.attribute(null, "isAnonymous", connection.isAnonymous.toString())
-    serializer.attribute(null, "lastConnected", connection.lastConnected.toString())
-    serializer.attribute(null, "autoConnect", connection.autoConnect.toString())
-    serializer.endTag(null, TAG_NETWORK_CONNECTION)
-  }
-
   private suspend fun readSettingsFromXml(inputStream: InputStream): ImportStats {
     val parser: XmlPullParser = Xml.newPullParser()
     parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
@@ -194,8 +157,6 @@ class SettingsManager(
 
     val stats = ImportStats()
     var eventType = parser.eventType
-
-    val networkConnections = mutableListOf<NetworkConnection>()
 
     while (eventType != XmlPullParser.END_DOCUMENT) {
       when (eventType) {
@@ -214,29 +175,10 @@ class SettingsManager(
                 stats.errors.add("Failed to import preference: ${e.message}")
               }
             }
-            TAG_NETWORK_CONNECTION -> {
-              try {
-                networkConnections.add(readNetworkConnection(parser))
-                stats.imported++
-              } catch (e: Exception) {
-                stats.failed++
-                stats.errors.add("Failed to import network connection: ${e.message}")
-              }
-            }
           }
         }
       }
       eventType = parser.next()
-    }
-
-    // Insert all database data
-    try {
-      if (networkConnections.isNotEmpty()) {
-        database.networkConnectionDao().insertAll(networkConnections)
-      }
-    } catch (e: Exception) {
-      stats.failed++
-      stats.errors.add("Failed to insert database data: ${e.message}")
     }
 
     return stats
@@ -273,25 +215,6 @@ class SettingsManager(
     editor.apply()
   }
 
-
-  private fun readNetworkConnection(parser: XmlPullParser): NetworkConnection {
-    return NetworkConnection(
-      id = 0, // Will be auto-generated
-      name = parser.getAttributeValue(null, "name") ?: "",
-      protocol =
-        NetworkProtocol.valueOf(
-          parser.getAttributeValue(null, "protocol") ?: "SMB",
-        ),
-      host = parser.getAttributeValue(null, "host") ?: "",
-      port = parser.getAttributeValue(null, "port")?.toIntOrNull() ?: 445,
-      username = parser.getAttributeValue(null, "username") ?: "",
-      password = parser.getAttributeValue(null, "password") ?: "",
-      path = parser.getAttributeValue(null, "path") ?: "/",
-      isAnonymous = parser.getAttributeValue(null, "isAnonymous")?.toBoolean() ?: false,
-      lastConnected = parser.getAttributeValue(null, "lastConnected")?.toLongOrNull() ?: 0L,
-      autoConnect = parser.getAttributeValue(null, "autoConnect")?.toBoolean() ?: false,
-    )
-  }
 
   fun getDefaultExportFilename(): String {
     val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())

@@ -29,37 +29,17 @@
 -dontnote org.xmlpull.v1.**
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
-# SMBJ ProGuard Rules
-# Keep SMBJ classes
--keep class com.hierynomus.smbj.** { *; }
--keep class com.hierynomus.mssmb2.** { *; }
--keep class com.hierynomus.msdtyp.** { *; }
--keep class com.hierynomus.msfscc.** { *; }
--keep class com.hierynomus.protocol.** { *; }
--keep class com.hierynomus.spnego.** { *; }
--keep class com.hierynomus.ntlm.** { *; }
--keep class com.hierynomus.security.** { *; }
-
-# JGSS (Kerberos/SPNEGO) - Optional, not needed for basic NTLM auth
-# These are used for domain authentication, which we don't use
--dontwarn org.ietf.jgss.**
--dontnote org.ietf.jgss.**
-
-# MBassador (event bus used by SMBJ) - EL (Expression Language) is optional
--dontwarn net.engio.mbassy.dispatch.el.**
--dontnote net.engio.mbassy.dispatch.el.**
--dontwarn javax.el.**
--dontnote javax.el.**
-
-# Keep MBassador core classes
--keep class net.engio.mbassy.** { *; }
-
-# BouncyCastle (crypto provider used by SMBJ)
--keep class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
-
-# ASN.1 classes
--keep class com.hierynomus.asn1.** { *; }
+# NewPipeExtractor (YouTube downloads)
+-keep class org.schabi.newpipe.extractor.** { *; }
+-keep class org.mozilla.javascript.** { *; }
+-keep class org.mozilla.classfile.ClassFileWriter
+-keep class com.google.protobuf.** { *; }
+-dontwarn org.mozilla.javascript.JavaToJSONConverters
+-dontwarn org.mozilla.javascript.tools.**
+-dontwarn javax.script.**
+-dontwarn jdk.dynalink.**
+-dontwarn edu.umd.cs.findbugs.annotations.**
+-dontwarn com.google.errorprone.annotations.**
 
 # Keep all classes that use reflection or are loaded dynamically
 -keepattributes Signature

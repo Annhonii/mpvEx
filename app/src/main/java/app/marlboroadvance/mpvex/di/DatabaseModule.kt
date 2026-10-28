@@ -352,6 +352,7 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
  * with secondarySubDelay column instead of externalSubtitles.
  *
  * Changes:
+ * - Drops the unused network_connections table (network streaming feature removed)
  * - Ensures PlaybackStateEntity has the correct schema by recreating the table
  * - Preserves all existing data during the migration
  */
@@ -359,6 +360,9 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
   override fun migrate(db: SupportSQLiteDatabase) {
     try {
       android.util.Log.d("Migration_8_9", "Starting migration from version 8 to 9 (schema repair)")
+
+      // The network streaming feature (SMB/FTP/WebDAV) was removed, so its table is no longer needed
+      db.execSQL("DROP TABLE IF EXISTS `network_connections`")
       
       // Check current schema to see if we need to repair
       val cursor = db.query("PRAGMA table_info(PlaybackStateEntity)")
@@ -495,16 +499,6 @@ val DatabaseModule =
     }
 
     // MediaFileRepository is a singleton object - no DI needed
-
-    single {
-      get<MpvExDatabase>().networkConnectionDao()
-    }
-
-    single {
-      app.marlboroadvance.mpvex.repository.NetworkRepository(
-        dao = get(),
-      )
-    }
 
     single {
       PlaylistRepository(

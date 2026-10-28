@@ -18,7 +18,7 @@ features.**
 - Picture-in-Picture (PiP)
 - Background Playback
 - High-Quality Rendering
-- Network Streaming
+- YouTube Downloads (NewPipe engine)
 - File Management
 - Completely free and open source and without any ads or excessive permissions
 - Media picker with tree and folder view modes
@@ -26,7 +26,6 @@ features.**
 - Zoom gesture
 - External Audio support
 - Search Functionality
-- SMB/FTP/WebDAV support
 - Custom Playlist management support
 
 **This project is still in development and is expected to have bugs. Please report any bugs you find in

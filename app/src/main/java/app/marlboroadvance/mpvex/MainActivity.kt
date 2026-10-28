@@ -19,7 +19,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
@@ -35,7 +34,6 @@ import androidx.navigation3.ui.NavDisplay
 import app.marlboroadvance.mpvex.preferences.AppearancePreferences
 import app.marlboroadvance.mpvex.preferences.preference.collectAsState
 import app.marlboroadvance.mpvex.presentation.Screen
-import app.marlboroadvance.mpvex.repository.NetworkRepository
 import app.marlboroadvance.mpvex.utils.update.UpdateDialog
 import app.marlboroadvance.mpvex.utils.update.UpdateViewModel
 import app.marlboroadvance.mpvex.ui.browser.MainScreen
@@ -47,7 +45,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 /**
@@ -55,7 +52,6 @@ import org.koin.android.ext.android.inject
  */
 class MainActivity : ComponentActivity() {
   private val appearancePreferences by inject<AppearancePreferences>()
-  private val networkRepository by inject<NetworkRepository>()
   
   // Create a coroutine scope tied to the activity lifecycle
   private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -72,9 +68,6 @@ class MainActivity : ComponentActivity() {
     
     PermissionUtils.setMediaAccessLauncher(mediaAccessLauncher)
 
-    // Register proxy lifecycle observer for network streaming
-    lifecycle.addObserver(app.marlboroadvance.mpvex.ui.browser.networkstreaming.proxy.ProxyLifecycleObserver())
-
     setContent {
       // Set up theme and edge-to-edge display
       val dark by appearancePreferences.darkMode.collectAsState()
@@ -86,11 +79,6 @@ class MainActivity : ComponentActivity() {
           darkScrim = Color.Transparent.toArgb(),
         ) { isDarkMode },
       )
-
-      // Auto-connect to saved network connections
-      LaunchedEffect(Unit) {
-        autoConnectToNetworks()
-      }
 
       MpvexTheme {
         Surface {
@@ -105,41 +93,6 @@ class MainActivity : ComponentActivity() {
       super.onDestroy()
     } catch (e: Exception) {
       Log.e("MainActivity", "Error during onDestroy", e)
-    }
-  }
-
-  /**
-   * Auto-connect to network connections that are marked for auto-connection
-   */
-  private suspend fun autoConnectToNetworks() {
-    // Delay auto-connect to let UI settle first
-    kotlinx.coroutines.delay(500)
-    
-    // Use coroutineScope for properly structured concurrency
-    withContext(Dispatchers.IO) {
-      try {
-        val autoConnectConnections = networkRepository.getAutoConnectConnections()
-        autoConnectConnections.forEach { connection ->
-          withContext(Dispatchers.Main) {
-            Log.d("MainActivity", "Auto-connecting to: ${connection.name}")
-          }
-          networkRepository.connect(connection)
-            .onSuccess {
-              withContext(Dispatchers.Main) {
-                Log.d("MainActivity", "Auto-connected successfully: ${connection.name}")
-              }
-            }
-            .onFailure { e ->
-              withContext(Dispatchers.Main) {
-                Log.e("MainActivity", "Auto-connect failed for ${connection.name}: ${e.message}")
-              }
-            }
-        }
-      } catch (e: Exception) {
-        withContext(Dispatchers.Main) {
-          Log.e("MainActivity", "Error during auto-connect", e)
-        }
-      }
     }
   }
 

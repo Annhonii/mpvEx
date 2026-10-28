@@ -461,7 +461,6 @@
   <string name="manage_lua_scripts">Manage Lua scripts</string>
   <string name="rename_playlist">Rename playlist</string>
   <string name="create_playlist">Create playlist</string>
-  <string name="add_connection">Add connection</string>
   <string name="playlist_name">Playlist name</string>
   <string name="playlist_url">Playlist URL</string>
   <string name="enter_url">Enter URL</string>
@@ -473,18 +472,10 @@
   <string name="home">Home</string>
   <string name="recents">Recents</string>
   <string name="playlists">Playlists</string>
-  <string name="network">Network</string>
   <string name="seconds">Seconds</string>
   <string name="milliseconds">Milliseconds</string>
   <string name="name">Name</string>
-  <string name="protocol">Protocol</string>
-  <string name="host_ip_address">Host/IP address</string>
-  <string name="port">Port</string>
   <string name="path">Path</string>
-  <string name="anonymous_guest_access">Anonymous/Guest access</string>
-  <string name="use_https_secure_connection">Use HTTPS (secure connection)</string>
-  <string name="username">Username</string>
-  <string name="password">Password</string>
   <string name="selected_long_press_to_reorder">Selected (long press to reorder)</string>
   <string name="available">Available</string>
   <string name="width">Width</string>

@@ -19,7 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -40,7 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import app.marlboroadvance.mpvex.presentation.Screen
 import app.marlboroadvance.mpvex.ui.browser.folderlist.FolderListScreen
-import app.marlboroadvance.mpvex.ui.browser.networkstreaming.NetworkStreamingScreen
+import app.marlboroadvance.mpvex.ui.browser.downloads.DownloadsScreen
 import app.marlboroadvance.mpvex.ui.browser.playlist.PlaylistScreen
 import app.marlboroadvance.mpvex.ui.browser.recentlyplayed.RecentlyPlayedScreen
 import androidx.compose.runtime.collectAsState
@@ -163,8 +163,8 @@ object MainScreen : Screen {
               onClick = { selectedTab = 2 }
             )
             NavigationBarItem(
-              icon = { Icon(Icons.Filled.Language, contentDescription = "Network") },
-              label = { Text("Network") },
+              icon = { Icon(Icons.Filled.FileDownload, contentDescription = "Downloads") },
+              label = { Text("Downloads") },
               selected = selectedTab == 3,
               onClick = { selectedTab = 3 }
             )
@@ -244,7 +244,7 @@ object MainScreen : Screen {
               0 -> FolderListScreen.Content()
               1 -> RecentlyPlayedScreen.Content()
               2 -> PlaylistScreen.Content()
-              3 -> NetworkStreamingScreen.Content()
+              3 -> DownloadsScreen.Content()
             }
           }
         }

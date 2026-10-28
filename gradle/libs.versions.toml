@@ -1,32 +1,25 @@
 [versions]
 agp = "9.4.0"
-commonsNet = "3.13.0"
-smbj = "0.14.0"
 kotlin = "2.3.20"
 composeBom = "2026.03.00"
 activityCompose = "1.13.0"
 koin = "4.2.0"
 lazycolumnscrollbar = "2.2.0"
-nanohttpd = "2.3.1"
 room = "2.8.4"
 navigation3 = "1.0.1"
 kotlinx-serialization = "1.10.0"
 accompanist = "0.37.3"
 okhttp = "5.3.2"
-sardineAndroid = "0.8"
 reorderable = "3.0.0"
 aboutLibraries = "15.1.1"
 mpv-android = "1.0.0"
 mediainfo-android = "1.0.2"
+newpipe-extractor = "v0.26.5"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-commons-net = { module = "commons-net:commons-net", version.ref = "commonsNet" }
-smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
 lazycolumnscrollbar = { module = "com.github.nanihadesuka:LazyColumnScrollbar", version.ref = "lazycolumnscrollbar" }
-nanohttpd = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttpd" }
-sardine-android = { module = "com.github.thegrizzlylabs:sardine-android", version.ref = "sardineAndroid" }
 saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version = "1.10.5" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -44,6 +37,7 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version = "1.1.0" }
 seeker = "com.github.abdallahmehiz:seeker:2.0.1"
 mediainfo-lib = { module = "io.github.marlboro-advance:mediainfo-android", version.ref = "mediainfo-android" }
+newpipe-extractor = { module = "com.github.TeamNewPipe:NewPipeExtractor", version.ref = "newpipe-extractor" }
 mpv-android = { module = "io.github.marlboro-advance:mpv-android", version.ref = "mpv-android" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }

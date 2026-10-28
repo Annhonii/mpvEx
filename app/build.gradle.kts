@@ -213,13 +213,8 @@ dependencies {
   implementation(libs.mediainfo.lib)
   implementation(libs.mpv.android)
 
-  // Network protocol libraries
-  implementation(libs.smbj)
-  implementation(libs.commons.net)
-  implementation(libs.sardine.android) {
-    exclude(group = "xpp3", module = "xpp3")
-  }
-  implementation(libs.nanohttpd)
+  // YouTube extraction engine (used by the Downloads tab)
+  implementation(libs.newpipe.extractor)
   implementation(libs.lazycolumnscrollbar)
   implementation(libs.reorderable)
 }
