@@ -6,8 +6,7 @@ permissions:
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+      - 'v*'
 
 jobs:
   release-for-github:
@@ -25,6 +24,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: sdkmanager "build-tools;34.0.0"
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -94,7 +99,7 @@ jobs:
           find "$STANDARD_RELEASE_DIR" -name "app-standard-*-release-unsigned.apk" -type f | while read -r apk; do
             signed_apk="${apk/-unsigned/}"
           
-            $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+            "$ANDROID_HOME/build-tools/34.0.0/apksigner" sign \
               --ks release.keystore \
               --ks-key-alias "${{ secrets.SIGNING_KEY_ALIAS }}" \
               --ks-pass "pass:${{ secrets.SIGNING_STORE_PASSWORD }}" \
@@ -102,7 +107,7 @@ jobs:
               --out "$signed_apk" \
               "$apk"
           
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$signed_apk"
+            "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$signed_apk"
             rm "$apk"
           done
           
@@ -116,7 +121,7 @@ jobs:
           fi
           
           SIGNED_PLAYSTORE_APK="${PLAYSTORE_APK/-unsigned/}"
-          $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" sign \
             --ks release.keystore \
             --ks-key-alias "${{ secrets.SIGNING_KEY_ALIAS }}" \
             --ks-pass "pass:${{ secrets.SIGNING_STORE_PASSWORD }}" \
@@ -124,7 +129,7 @@ jobs:
             --out "$SIGNED_PLAYSTORE_APK" \
             "$PLAYSTORE_APK"
           
-          $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$SIGNED_PLAYSTORE_APK"
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$SIGNED_PLAYSTORE_APK"
           rm "$PLAYSTORE_APK"
           
           # Sign F-Droid APKs
@@ -139,7 +144,7 @@ jobs:
           find "$FDROID_RELEASE_DIR" -name "app-fdroid-*-release-unsigned.apk" -type f | while read -r apk; do
             signed_apk="${apk/-unsigned/}"
           
-            $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+            "$ANDROID_HOME/build-tools/34.0.0/apksigner" sign \
               --ks release.keystore \
               --ks-key-alias "${{ secrets.SIGNING_KEY_ALIAS }}" \
               --ks-pass "pass:${{ secrets.SIGNING_STORE_PASSWORD }}" \
@@ -147,7 +152,7 @@ jobs:
               --out "$signed_apk" \
               "$apk"
           
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$signed_apk"
+            "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify "$signed_apk"
             rm "$apk"
           done
           
@@ -244,7 +249,7 @@ jobs:
             mpvEx-x86_64-${{ env.VERSION_TAG }}.apk
             mpvEx-playstore-${{ env.VERSION_TAG }}.apk
             mpvEx-fdroid-${{ env.VERSION_TAG }}.apk
-          draft: true
-          prerelease: false
+          draft: false
+          prerelease: ${{ contains(env.VERSION_TAG, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
