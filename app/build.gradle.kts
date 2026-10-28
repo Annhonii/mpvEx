@@ -12,7 +12,7 @@ plugins {
 
 android {
   namespace = "app.marlboroadvance.mpvex"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "app.marlboroadvance.mpvex"
